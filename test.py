@@ -1,34 +1,94 @@
-from linearBYjai import LinearRegression
+from linearBYjai import LinearRegression, LinearRegression2
+from unittest import TestCase
 
 x = [
-5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
-35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
-45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
-55, 56, 57, 58, 59, 60, 61, 62, 63, 64,
-65, 66, 67, 68, 69, 70, 71, 72, 73, 74,
-75, 76, 77, 78, 79, 80, 81, 82, 83, 84,
-85, 86, 87, 88, 89, 90, 91, 92, 93, 94,
-95, 96, 97, 98, 99, 100, 101, 102, 103, 104
+    5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+    15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+    25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
+    35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+    45, 46, 47, 48, 49, 50, 51, 52, 53, 54,
+    55, 56, 57, 58, 59, 60, 61, 62, 63, 64,
+    65, 66, 67, 68, 69, 70, 71, 72, 73, 74,
+    75, 76, 77, 78, 79, 80, 81, 82, 83, 84,
+    85, 86, 87, 88, 89, 90, 91, 92, 93, 94,
+    95, 96, 97, 98, 99, 100, 101, 102, 103, 104
 ]
 
 y = [
-100, 122, 148, 178, 212, 250, 292, 338, 388, 442,
-500, 562, 628, 698, 772, 850, 932, 1018, 1108, 1202,
-1300, 1402, 1508, 1618, 1732, 1850, 1972, 2098, 2228, 2362,
-2500, 2642, 2788, 2938, 3092, 3250, 3412, 3578, 3748, 3922,
-4100, 4282, 4468, 4658, 4852, 5050, 5252, 5458, 5668, 5882,
-6100, 6322, 6548, 6778, 7012, 7250, 7492, 7738, 7988, 8242,
-8500, 8762, 9028, 9298, 9572, 9850, 10132, 10418, 10708, 11002,
-11300, 11602, 11908, 12218, 12532, 12850, 13172, 13498, 13828, 14162,
-14500, 14842, 15188, 15538, 15892, 16250, 16612, 16978, 17348, 17722,
-18100, 18482, 18868, 19258, 19652, 20050, 20452, 20858, 21268, 21682
+    100, 122, 148, 178, 212, 250, 292, 338, 388, 442,
+    500, 562, 628, 698, 772, 850, 932, 1018, 1108, 1202,
+    1300, 1402, 1508, 1618, 1732, 1850, 1972, 2098, 2228, 2362,
+    2500, 2642, 2788, 2938, 3092, 3250, 3412, 3578, 3748, 3922,
+    4100, 4282, 4468, 4658, 4852, 5050, 5252, 5458, 5668, 5882,
+    6100, 6322, 6548, 6778, 7012, 7250, 7492, 7738, 7988, 8242,
+    8500, 8762, 9028, 9298, 9572, 9850, 10132, 10418, 10708, 11002,
+    11300, 11602, 11908, 12218, 12532, 12850, 13172, 13498, 13828, 14162,
+    14500, 14842, 15188, 15538, 15892, 16250, 16612, 16978, 17348, 17722,
+    18100, 18482, 18868, 19258, 19652, 20050, 20452, 20858, 21268, 21682
 ]
 
+class TestInvalidInput(TestCase):
+    def test_invalid_length(self):
+        model = LinearRegression()
+        x = [1, 2, 3]
+        y = [4, 5]
+        try:
+            model.fit(x, y)
+        except ValueError as e:
+            assert str(e) == "x and y must have same length"
+        else:
+            assert False, "Expected ValueError for invalid input lengths"
 
-model = LinearRegression()
+    def test_zero_deviation(self):
+        model = LinearRegression()
+        x = [1, 1, 1]
+        y = [2, 2, 2]
+        try:
+            model.fit(x, y)
+        except ValueError as e:
+            assert str(e) == " The deviation is 0, Can't move further"
+        else:
+            assert False, "Expected ValueError for zero deviation"
 
-model.fit(x,y)
-result = model.predict(120)
-print(result)
+
+class TestPrediction(TestCase):
+    def test_predict_single_value(self):
+        model = LinearRegression()
+        x = [1, 2, 3]
+        y = [2, 4, 6]
+        model.fit(x, y)
+        result = model.predict(4)
+        assert result == 8.0
+
+    def test_predict_list(self):
+        model = LinearRegression()
+        x = [1, 2, 3]
+        y = [2, 4, 6]
+        model.fit(x, y)
+        result = model.predict([4, 5])
+        assert result == [8.0, 10.0]
+
+    def test_predict(self):
+        model = LinearRegression()
+        model.fit(x, y)
+        result = model.predict(120)
+        assert result == 21936.0, f"{result=}!=21936.0"
+
+
+class TestPrediction2(TestCase):
+    def test_predict_single_value(self):
+        model = LinearRegression2([1, 2, 3], [2, 4, 6])
+        result = model.predict(4)
+        expected = [8.0]
+        assert result == expected, f"{result=}!={expected=}"
+
+    def test_predict_list(self):
+        model = LinearRegression2([1, 2, 3], [2, 4, 6])
+        result = model.predict(4, 5)
+        expected = [8.0, 10.0]
+        assert result == expected, f"{result=}!={expected=}"
+
+    def test_predict(self):
+        model = LinearRegression2(x, y)
+        result = model.predict(120)[0]
+        assert result == 21936.0, f"{result=}!=21936.0"
